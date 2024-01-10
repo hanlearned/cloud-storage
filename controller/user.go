@@ -2,6 +2,7 @@ package controller
 
 import (
 	"cloud-storage/controller/schema"
+	"cloud-storage/lib"
 	"cloud-storage/model"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -16,9 +17,14 @@ func Login(c *gin.Context) {
 	}
 	name := userInfo.Name
 	password := userInfo.Password
+
 	fmt.Println(name, password)
+	token, err := lib.GetToken(name)
+	if err == nil {
+		c.JSON(200, gin.H{"msg": "sorry input error"})
+	}
+	fmt.Println(token)
 	c.JSON(200, userInfo)
-	//context.String(http.StatusOK, "hello world")
 }
 
 func Register(c *gin.Context) {
@@ -35,13 +41,13 @@ func Register(c *gin.Context) {
 		c.JSON(200, gin.H{"msg": "两次密码不一致"})
 		return
 	}
-	fmt.Println(name)
-	model.QueryUser(name)
-	//if res.ID != nil {
-	//	c.JSON(200, gin.H{"msg": "注册失败 用户已存在"})
-	//}
 
-	//fmt.Println(name, password, re_password)
-	//model.CreateUser(name, password)
+	registerRes := model.QueryUser(name)
+	if registerRes == false {
+		c.JSON(200, gin.H{"msg": "注册失败 用户已存在"})
+		return
+	}
+	model.CreateUser(name, password)
 	c.JSON(200, gin.H{"msg": "注册成功"})
+	return
 }

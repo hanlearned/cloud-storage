@@ -29,11 +29,12 @@ func QueryUser(name string) bool {
 		Name: name,
 	}
 	result := mysql.DB.Where("name = ?", name).Find(&user)
+	fmt.Println(user)
 	if result.Error != nil {
 		fmt.Println(result.Error)
 	}
 	if user.ID == 0 {
-		return false
+		return true
 	}
-	return true
+	return false
 }
