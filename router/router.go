@@ -16,5 +16,10 @@ func SetupRouter() *gin.Engine {
 		// 注册
 		user.GET("/register", controller.Register)
 	}
+	file := router.Group("file")
+	{
+		file.POST("/upload", controller.Upload)
+		// 注册
+	}
 	return router
 }

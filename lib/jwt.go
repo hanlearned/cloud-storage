@@ -1,7 +1,6 @@
 package lib
 
 import (
-	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"time"
 )
@@ -13,18 +12,19 @@ type JWToken struct {
 var letters = []byte("www.baidu.com")
 
 func GetToken(username string) (string, error) {
-
+	// 生成 token
 	c := jwt.MapClaims{
-		"iss": username,                             // 设置签发者
-		"sub": "john",                               // 设置主题
-		"exp": time.Now().Add(time.Hour * 1).Unix(), // 设置过期时间
+		"iss": username,                                // 设置签发者
+		"sub": "john",                                  // 设置主题
+		"exp": time.Now().Add(time.Second * 20).Unix(), // 设置过期时间 时间校验为false
 	}
 	// 固定密钥需要使用：SigningMethodHS256
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, c)
 	return token.SignedString(letters)
 }
 
-func JwtParse(jwt_string string) {
+func CheckJwt(jwt_string string) (bool, map[string]interface{}) {
+	// 解析 token
 	myClaims := &jwt.MapClaims{}
 
 	token, err := jwt.ParseWithClaims(jwt_string, myClaims,
@@ -32,18 +32,13 @@ func JwtParse(jwt_string string) {
 			return letters, nil
 		},
 	)
-
-	//token, err = jwt.Parse(jwt_string,
-	//	func(token *jwt.Token) (interface{}, error) {
-	//		return letters, nil
-	//	},
-	//)
+	//var my_claims = *myClaims
+	//var exp = my_claims["exp"]
 	if err != nil {
-		fmt.Println("解析 JWT 失败:", err)
-		return
+		return false, *myClaims
 	}
-	var exp = *myClaims
-	var exp1 = exp["exp"]
-	fmt.Println(exp1)
-	fmt.Println(token)
+	if token.Valid {
+		return true, *myClaims
+	}
+	return false, *myClaims
 }
