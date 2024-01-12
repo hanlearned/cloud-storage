@@ -1,9 +1,9 @@
-package controller
+package service
 
 import (
-	"cloud-storage/controller/schema"
 	"cloud-storage/lib"
 	"cloud-storage/model"
+	"cloud-storage/service/schema"
 	"fmt"
 	"github.com/gin-gonic/gin"
 )
