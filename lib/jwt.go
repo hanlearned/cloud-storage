@@ -24,7 +24,7 @@ func GetToken(username string) (string, error) {
 }
 
 func CheckJwt(jwt_string string) (bool, map[string]interface{}) {
-	// 解析 token
+	// 解析 token, 判断token是否超时
 	myClaims := &jwt.MapClaims{}
 
 	token, err := jwt.ParseWithClaims(jwt_string, myClaims,
@@ -32,8 +32,6 @@ func CheckJwt(jwt_string string) (bool, map[string]interface{}) {
 			return letters, nil
 		},
 	)
-	//var my_claims = *myClaims
-	//var exp = my_claims["exp"]
 	if err != nil {
 		return false, *myClaims
 	}

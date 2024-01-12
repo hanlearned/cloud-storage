@@ -49,7 +49,23 @@ func Register(c *gin.Context) {
 		c.JSON(200, gin.H{"msg": "注册失败 用户已存在"})
 		return
 	}
-	model.CreateUser(name, password)
-	c.JSON(200, gin.H{"msg": "注册成功"})
-	return
+
+	user_create_res, user := model.CreateUser(name, password)
+	if user_create_res == false {
+		c.JSON(200, gin.H{"msg": "用户注册失败"})
+		return
+	}
+
+	warehouse_create_res, warehouse := model.CreateWare(user.ID)
+	if warehouse_create_res == false {
+		c.JSON(200, gin.H{"msg": "用户仓库创建失败"})
+		return
+	}
+
+	warehouse_update_res := model.SaveUser(user.ID, warehouse.ID)
+	if warehouse_update_res == false {
+		c.JSON(200, gin.H{"msg": "用户仓库跟新失败"})
+		return
+	}
+	c.JSON(200, gin.H{"msg": "用户注册成功"})
 }

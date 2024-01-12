@@ -2,12 +2,12 @@ package router
 
 import (
 	"cloud-storage/controller"
+	"cloud-storage/middleware"
 	"github.com/gin-gonic/gin"
 )
 
 func SetupRouter() *gin.Engine {
 	//router := gin.Default()
-
 	// 登录
 	router := gin.New()
 	user := router.Group("user")
@@ -17,6 +17,7 @@ func SetupRouter() *gin.Engine {
 		user.GET("/register", controller.Register)
 	}
 	file := router.Group("file")
+	file.Use(middleware.CheckLogin)
 	{
 		file.POST("/upload", controller.Upload)
 		// 注册

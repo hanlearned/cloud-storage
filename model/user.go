@@ -6,22 +6,35 @@ import (
 )
 
 type UserInfo struct {
-	ID       int
-	Name     string
-	Password string
+	ID          int
+	Name        string
+	Password    string
+	WareHouseId int
 }
 
-func CreateUser(name string, password string) {
+func CreateUser(name string, password string) (bool, UserInfo) {
 	user := UserInfo{
 		Name:     name,
 		Password: password,
 	}
 	result := mysql.DB.Create(&user)
-
 	if result.Error != nil {
 		fmt.Println(result.Error)
+		return false, user
 	}
-	fmt.Println(user.ID)
+	return true, user
+}
+
+func SaveUser(userId int, warehouseId int) bool {
+	user := UserInfo{
+		WareHouseId: warehouseId,
+	}
+	result := mysql.DB.Where("id = ?", userId).Find(&user).Update("WareHouseId", warehouseId)
+	if result.Error != nil {
+		fmt.Println(result.Error)
+		return false
+	}
+	return true
 }
 
 func QueryUser(name string) bool {
