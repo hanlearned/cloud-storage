@@ -2,20 +2,19 @@ package middleware
 
 import (
 	"cloud-storage/lib"
-	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
 func CheckLogin(c *gin.Context) {
 	authorization := c.GetHeader("Authorization")
 	token := authorization[7:]
-	is_vaild, myClaims := lib.CheckJwt(token)
-	if is_vaild == false {
+	isValid, myClaims := lib.CheckJwt(token)
+	if isValid == false {
 		c.JSON(401, gin.H{"msg": "请登录"})
 		c.Abort()
 	}
 	var Claims = myClaims
 	user := Claims["iss"]
-	fmt.Println(user)
+	c.Set("user", user)
 	c.Next()
 }

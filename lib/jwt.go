@@ -23,11 +23,11 @@ func GetToken(username string) (string, error) {
 	return token.SignedString(letters)
 }
 
-func CheckJwt(jwt_string string) (bool, map[string]interface{}) {
+func CheckJwt(jwtString string) (bool, map[string]interface{}) {
 	// 解析 token, 判断token是否超时
 	myClaims := &jwt.MapClaims{}
 
-	token, err := jwt.ParseWithClaims(jwt_string, myClaims,
+	token, err := jwt.ParseWithClaims(jwtString, myClaims,
 		func(token *jwt.Token) (interface{}, error) {
 			return letters, nil
 		},

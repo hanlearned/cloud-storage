@@ -51,3 +51,18 @@ func QueryUser(name string) bool {
 	}
 	return false
 }
+
+func CheckoutUserOrPasswd(name string, passwd string) bool {
+	user := UserInfo{
+		Name:     name,
+		Password: passwd,
+	}
+	result := mysql.DB.Where("name = ? and password = ?", name, passwd).Find(&user)
+	if result.Error != nil {
+		fmt.Println(result.Error)
+	}
+	if user.ID == 0 {
+		return false
+	}
+	return true
+}

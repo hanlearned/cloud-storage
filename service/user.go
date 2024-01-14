@@ -12,16 +12,20 @@ func Login(c *gin.Context) {
 	var userInfo schema.UserInfo
 	err := c.ShouldBindJSON(&userInfo)
 	if err != nil {
-		c.JSON(200, gin.H{"msg": err})
+		c.JSON(200, gin.H{"msg": fmt.Sprintf("%s", err)})
 		return
 	}
 	name := userInfo.Name
 	password := userInfo.Password
-	fmt.Println(name, password)
+	res := model.CheckoutUserOrPasswd(name, password)
+	if res == false {
+		c.JSON(402, gin.H{"msg": "用户或密码错误"})
+		return
+	}
 	token, err := lib.GetToken(name)
 	if err != nil {
 		fmt.Println(err)
-		c.JSON(200, gin.H{"msg": ""})
+		c.JSON(200, gin.H{"msg": "token 生成错误"})
 		return
 	}
 	c.JSON(200, gin.H{
