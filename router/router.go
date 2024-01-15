@@ -16,6 +16,13 @@ func SetupRouter() *gin.Engine {
 		// 注册
 		user.GET("/register", service.Register)
 	}
+
+	folder := router.Group("folder")
+	folder.Use(middleware.CheckLogin)
+	{
+		folder.POST("/create_folder", service.CreateFolder)
+	}
+
 	file := router.Group("file")
 	file.Use(middleware.CheckLogin)
 	{

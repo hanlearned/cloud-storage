@@ -37,7 +37,7 @@ func SaveUser(userId int, warehouseId int) bool {
 	return true
 }
 
-func QueryUser(name string) bool {
+func IfUserExist(name string) bool {
 	user := UserInfo{
 		Name: name,
 	}
@@ -61,6 +61,7 @@ func CheckoutUserOrPasswd(name string, passwd string) bool {
 	if result.Error != nil {
 		fmt.Println(result.Error)
 	}
+	fmt.Println(user)
 	if user.ID == 0 {
 		return false
 	}

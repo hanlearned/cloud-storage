@@ -14,9 +14,9 @@ var letters = []byte("www.baidu.com")
 func GetToken(username string) (string, error) {
 	// 生成 token
 	c := jwt.MapClaims{
-		"iss": username,                                // 设置签发者
-		"sub": "john",                                  // 设置主题
-		"exp": time.Now().Add(time.Second * 20).Unix(), // 设置过期时间 时间校验为false
+		"iss": username,                                          // 设置签发者
+		"sub": "john",                                            // 设置主题
+		"exp": time.Now().Add(time.Second * 60 * 60 * 24).Unix(), // 设置过期时间 时间校验为false
 	}
 	// 固定密钥需要使用：SigningMethodHS256
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, c)

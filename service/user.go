@@ -42,32 +42,32 @@ func Register(c *gin.Context) {
 	}
 	name := userInfo.Name
 	password := userInfo.Password
-	re_password := userInfo.RePassword
-	if password != re_password {
+	rePassword := userInfo.RePassword
+	if password != rePassword {
 		c.JSON(200, gin.H{"msg": "两次密码不一致"})
 		return
 	}
 
-	registerRes := model.QueryUser(name)
+	registerRes := model.IfUserExist(name)
 	if registerRes == false {
 		c.JSON(200, gin.H{"msg": "注册失败 用户已存在"})
 		return
 	}
 
-	user_create_res, user := model.CreateUser(name, password)
-	if user_create_res == false {
+	userCreateRes, user := model.CreateUser(name, password)
+	if userCreateRes == false {
 		c.JSON(200, gin.H{"msg": "用户注册失败"})
 		return
 	}
 
-	warehouse_create_res, warehouse := model.CreateWare(user.ID)
-	if warehouse_create_res == false {
+	warehouseCreateRes, warehouse := model.CreateWare(user.ID)
+	if warehouseCreateRes == false {
 		c.JSON(200, gin.H{"msg": "用户仓库创建失败"})
 		return
 	}
 
-	warehouse_update_res := model.SaveUser(user.ID, warehouse.ID)
-	if warehouse_update_res == false {
+	warehouseUpdateRes := model.SaveUser(user.ID, warehouse.ID)
+	if warehouseUpdateRes == false {
 		c.JSON(200, gin.H{"msg": "用户仓库跟新失败"})
 		return
 	}
