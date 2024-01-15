@@ -8,7 +8,7 @@ import (
 type Folder struct {
 	ID          int
 	Name        string
-	WarehouseId int
+	WareHouseId int
 	FolderId    int
 	Included    int
 }
@@ -17,9 +17,10 @@ func CreateFolder(name string, folderId int, warehouseId int, included int) (boo
 	folder := Folder{
 		Name:        name,
 		FolderId:    folderId,
-		WarehouseId: warehouseId,
+		WareHouseId: warehouseId,
 		Included:    included,
 	}
+	fmt.Println(folder)
 	result := mysql.DB.Create(&folder)
 	if result.Error != nil {
 		fmt.Println(result.Error)
