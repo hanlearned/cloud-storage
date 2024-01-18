@@ -21,6 +21,7 @@ func SetupRouter() *gin.Engine {
 	folder.Use(middleware.CheckLogin)
 	{
 		folder.POST("/create_folder", service.CreateFolder)
+		folder.DELETE("/delete_folder/:folder_id/", service.DeleteFolder)
 	}
 
 	file := router.Group("file")
