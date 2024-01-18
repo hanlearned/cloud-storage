@@ -8,8 +8,12 @@ import (
 )
 
 func ListFolder(c *gin.Context) {
-
-	listFolder := model.ListFolder(1)
+	wareHouseId, isExist := c.Get("wareHouseId")
+	if isExist == false {
+		c.JSON(400, gin.H{"msg": "仓库不存在"})
+		return
+	}
+	listFolder := model.ListFolder(wareHouseId.(int))
 	c.JSON(200, gin.H{"msg": listFolder})
 }
 

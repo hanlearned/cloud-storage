@@ -52,9 +52,6 @@ func DeleteFolder(folderId int, wareHouseId int) bool {
 	if result.Error != nil {
 		return false
 	}
-	if folder.FolderId == 0 {
-		return false
-	}
 	return true
 }
 
