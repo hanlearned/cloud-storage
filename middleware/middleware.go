@@ -14,7 +14,7 @@ func CheckLogin(c *gin.Context) {
 		c.Abort()
 	}
 	var Claims = myClaims
-	user := Claims["iss"]
-	c.Set("user", user)
+	userId := Claims["iss"]
+	c.Set("user", userId)
 	c.Next()
 }

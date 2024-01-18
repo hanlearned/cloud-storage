@@ -2,6 +2,7 @@ package model
 
 import (
 	"cloud-storage/model/mysql"
+	"errors"
 )
 
 type UserInfo struct {
@@ -24,9 +25,7 @@ func CreateUser(name string, password string) (UserInfo, error) {
 }
 
 func SaveUser(userId int, warehouseId int) error {
-	user := UserInfo{
-		WareHouseId: warehouseId,
-	}
+	var user UserInfo
 	result := mysql.DB.Where("id = ?", userId).Find(&user).Update("WareHouseId", warehouseId)
 	if result.Error != nil {
 		return result.Error
@@ -48,26 +47,24 @@ func IfUserExist(name string) bool {
 	return false
 }
 
-func CheckoutUserOrPasswd(name string, passwd string) bool {
-	user := UserInfo{
-		Name:     name,
-		Password: passwd,
-	}
+func CheckoutUserOrPasswd(name string, passwd string) (UserInfo, error) {
+	var user UserInfo
 	result := mysql.DB.Where("name = ? and password = ?", name, passwd).Find(&user)
 	if result.Error != nil {
-		return false
+		return user, result.Error
 	}
+	var err error
 	if user.ID == 0 {
-		return false
+		err = errors.New("用户不存在")
+		return user, err
 	}
-	return true
+	return user, nil
 }
 
-func QueryUserWare(name string) (UserInfo, error) {
-	user := UserInfo{
-		Name: name,
-	}
-	result := mysql.DB.Where("name", name).Find(&user)
+func QueryUserWare(userID interface{}) (UserInfo, error) {
+	var user UserInfo
+	uid := int(userID.(float64))
+	result := mysql.DB.Where("id", uid).Find(&user)
 	if result.Error != nil {
 		return user, result.Error
 	}

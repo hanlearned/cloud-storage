@@ -17,14 +17,13 @@ func Login(c *gin.Context) {
 	}
 	name := userInfo.Name
 	password := userInfo.Password
-	res := model.CheckoutUserOrPasswd(name, password)
-	if res == false {
-		c.JSON(402, gin.H{"msg": "用户或密码错误"})
+	userCheck, err := model.CheckoutUserOrPasswd(name, password)
+	if err != nil {
+		c.JSON(402, gin.H{"msg": fmt.Sprintf("%s", err)})
 		return
 	}
-	token, err := lib.GetToken(name)
+	token, err := lib.GetToken(userCheck.ID)
 	if err != nil {
-		fmt.Println(err)
 		c.JSON(200, gin.H{"msg": "token 生成错误"})
 		return
 	}

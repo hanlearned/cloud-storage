@@ -7,6 +7,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func ListFolder(c *gin.Context) {
+	listFolder := model.ListFolder(1)
+	c.JSON(200, gin.H{"msg": listFolder})
+}
+
 func CreateFolder(c *gin.Context) {
 	var folder schema.Folder
 	err := c.ShouldBindJSON(&folder)
@@ -19,15 +24,15 @@ func CreateFolder(c *gin.Context) {
 		c.JSON(400, gin.H{"msg": "用户不存在"})
 		return
 	}
-	userInfo, err := model.QueryUserWare(fmt.Sprintf("%s", user))
+	userInfo, err := model.QueryUserWare(user)
 	if err != nil {
 		c.JSON(200, gin.H{"msg": fmt.Sprintf("%s", err)})
 		return
 	}
 	wareHouseId := userInfo.WareHouseId
-	createFolderRes, _ := model.CreateFolder(folder.Name, folder.FolderId, wareHouseId, 0)
-	if createFolderRes == false {
-		c.JSON(200, gin.H{"msg": "创建失败"})
+	_, err = model.CreateFolder(folder.Name, folder.FolderId, wareHouseId)
+	if err != nil {
+		c.JSON(200, gin.H{"msg": fmt.Sprintf("%s", err)})
 		return
 	}
 	c.JSON(200, gin.H{"msg": folder})

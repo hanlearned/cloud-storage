@@ -2,6 +2,7 @@ package model
 
 import (
 	"cloud-storage/model/mysql"
+	"errors"
 )
 
 type Folder struct {
@@ -12,32 +13,32 @@ type Folder struct {
 	Included    int
 }
 
-func CreateFolder(name string, folderId int, warehouseId int, included int) (bool, Folder) {
+func CreateFolder(name string, folderId int, warehouseId int) (Folder, error) {
 	folder := Folder{
 		Name:        name,
 		FolderId:    folderId,
 		WareHouseId: warehouseId,
-		Included:    included,
+		Included:    0,
 	}
 	// 判断父级文件夹是否存在
-	folderExist := QueryFolderByID(folderId)
+	folderExist := QueryFolderByID(folderId, warehouseId)
 	if folderExist == false {
-		return false, folder
+		return folder, errors.New("父级文件夹不存在")
 	}
 	result := mysql.DB.Create(&folder)
 	if result.Error != nil {
-		return false, folder
+		return folder, nil
 	}
-	return true, folder
+	return folder, nil
 }
 
-func QueryFolderByID(folderId int) bool {
+func QueryFolderByID(folderId int, wareHouse int) bool {
 	// 判断文件夹是否存在
 	if folderId == 0 {
 		return true
 	}
-	folder := Folder{}
-	mysql.DB.Where("id = ?", folderId).Find(&folder)
+	var folder Folder
+	mysql.DB.Where("id = ? and ware_house_id = ?", folderId, wareHouse).Find(&folder)
 	if folder.ID == 0 {
 		return false
 	}
@@ -51,4 +52,10 @@ func DeleteFolder(folderId int) bool {
 		return false
 	}
 	return true
+}
+
+func ListFolder(warehouseId int) []Folder {
+	var folderList []Folder
+	mysql.DB.Where("ware_house_id = ?", warehouseId).Find(&folderList)
+	return folderList
 }
