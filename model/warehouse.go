@@ -1,6 +1,5 @@
 package model
 
-import "fmt"
 import "cloud-storage/model/mysql"
 
 type WareHouse struct {
@@ -10,17 +9,15 @@ type WareHouse struct {
 	UserID       int
 }
 
-func CreateWare(userID int) (bool, WareHouse) {
+func CreateWare(userID int) (WareHouse, error) {
 	warehouse := WareHouse{
 		UserID:       userID,
 		StorageSpace: 500,
 		UsedSpace:    0,
 	}
 	result := mysql.DB.Create(&warehouse)
-
 	if result.Error != nil {
-		fmt.Println(result.Error)
-		return false, warehouse
+		return warehouse, result.Error
 	}
-	return true, warehouse
+	return warehouse, nil
 }

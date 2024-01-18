@@ -2,7 +2,6 @@ package model
 
 import (
 	"cloud-storage/model/mysql"
-	"fmt"
 )
 
 type UserInfo struct {
@@ -12,29 +11,27 @@ type UserInfo struct {
 	WareHouseId int
 }
 
-func CreateUser(name string, password string) (bool, UserInfo) {
+func CreateUser(name string, password string) (UserInfo, error) {
 	user := UserInfo{
 		Name:     name,
 		Password: password,
 	}
 	result := mysql.DB.Create(&user)
 	if result.Error != nil {
-		fmt.Println(result.Error)
-		return false, user
+		return user, result.Error
 	}
-	return true, user
+	return user, nil
 }
 
-func SaveUser(userId int, warehouseId int) bool {
+func SaveUser(userId int, warehouseId int) error {
 	user := UserInfo{
 		WareHouseId: warehouseId,
 	}
 	result := mysql.DB.Where("id = ?", userId).Find(&user).Update("WareHouseId", warehouseId)
 	if result.Error != nil {
-		fmt.Println(result.Error)
-		return false
+		return result.Error
 	}
-	return true
+	return nil
 }
 
 func IfUserExist(name string) bool {
@@ -42,9 +39,8 @@ func IfUserExist(name string) bool {
 		Name: name,
 	}
 	result := mysql.DB.Where("name = ?", name).Find(&user)
-	fmt.Println(user)
 	if result.Error != nil {
-		fmt.Println(result.Error)
+		return false
 	}
 	if user.ID == 0 {
 		return true
@@ -59,7 +55,7 @@ func CheckoutUserOrPasswd(name string, passwd string) bool {
 	}
 	result := mysql.DB.Where("name = ? and password = ?", name, passwd).Find(&user)
 	if result.Error != nil {
-		fmt.Println(result.Error)
+		return false
 	}
 	if user.ID == 0 {
 		return false
@@ -67,13 +63,13 @@ func CheckoutUserOrPasswd(name string, passwd string) bool {
 	return true
 }
 
-func QueryUserWare(name string) UserInfo {
+func QueryUserWare(name string) (UserInfo, error) {
 	user := UserInfo{
 		Name: name,
 	}
 	result := mysql.DB.Where("name", name).Find(&user)
 	if result.Error != nil {
-		fmt.Println(result.Error)
+		return user, result.Error
 	}
-	return user
+	return user, nil
 }
