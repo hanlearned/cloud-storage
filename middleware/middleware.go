@@ -2,6 +2,8 @@ package middleware
 
 import (
 	"cloud-storage/lib"
+	"cloud-storage/model"
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,6 +17,13 @@ func CheckLogin(c *gin.Context) {
 	}
 	var Claims = myClaims
 	userId := Claims["iss"]
+	userInfo, err := model.QueryUserWare(userId)
+	if err != nil {
+		c.JSON(200, gin.H{"msg": fmt.Sprintf("%s", err)})
+		c.Abort()
+	}
+	wareHouseId := userInfo.WareHouseId
 	c.Set("user", userId)
+	c.Set("wareHouseId", wareHouseId)
 	c.Next()
 }

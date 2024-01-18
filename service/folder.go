@@ -8,6 +8,7 @@ import (
 )
 
 func ListFolder(c *gin.Context) {
+
 	listFolder := model.ListFolder(1)
 	c.JSON(200, gin.H{"msg": listFolder})
 }
@@ -19,18 +20,12 @@ func CreateFolder(c *gin.Context) {
 		c.JSON(200, gin.H{"msg": fmt.Sprintf("%s", err)})
 		return
 	}
-	user, isExist := c.Get("user")
+	wareHouseId, isExist := c.Get("wareHouseId")
 	if isExist == false {
-		c.JSON(400, gin.H{"msg": "用户不存在"})
+		c.JSON(400, gin.H{"msg": "仓库不存在"})
 		return
 	}
-	userInfo, err := model.QueryUserWare(user)
-	if err != nil {
-		c.JSON(200, gin.H{"msg": fmt.Sprintf("%s", err)})
-		return
-	}
-	wareHouseId := userInfo.WareHouseId
-	_, err = model.CreateFolder(folder.Name, folder.FolderId, wareHouseId)
+	_, err = model.CreateFolder(folder.Name, folder.FolderId, wareHouseId.(int))
 	if err != nil {
 		c.JSON(200, gin.H{"msg": fmt.Sprintf("%s", err)})
 		return
@@ -46,7 +41,12 @@ func DeleteFolder(c *gin.Context) {
 		c.JSON(200, gin.H{"folderId": fmt.Sprintf("%s", folder)})
 		return
 	}
-	res := model.DeleteFolder(folder.FolderId)
+	wareHouseId, isExist := c.Get("wareHouseId")
+	if isExist == false {
+		c.JSON(400, gin.H{"msg": "仓库不存在"})
+		return
+	}
+	res := model.DeleteFolder(folder.FolderId, wareHouseId.(int))
 	if res == true {
 		c.JSON(200, gin.H{"msg": "删除成功"})
 		return

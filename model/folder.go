@@ -45,10 +45,14 @@ func QueryFolderByID(folderId int, wareHouse int) bool {
 	return true
 }
 
-func DeleteFolder(folderId int) bool {
-	folder := Folder{}
-	result := mysql.DB.Where("id = ?", folderId).Delete(&folder)
+func DeleteFolder(folderId int, wareHouseId int) bool {
+	var folder Folder
+
+	result := mysql.DB.Where("id = ? and ware_house_id = ?", folderId, wareHouseId).Delete(&folder)
 	if result.Error != nil {
+		return false
+	}
+	if folder.FolderId == 0 {
 		return false
 	}
 	return true
