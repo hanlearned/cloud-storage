@@ -28,7 +28,7 @@ func SetupRouter() *gin.Engine {
 	file := router.Group("file")
 	file.Use(middleware.CheckLogin)
 	{
-		file.POST("/upload", service.Upload)
+		file.POST("/upload", service.UploadFile)
 		// 注册
 	}
 	return router
