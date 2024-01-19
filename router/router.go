@@ -29,7 +29,6 @@ func SetupRouter() *gin.Engine {
 	file.Use(middleware.CheckLogin)
 	{
 		file.POST("/upload", service.UploadFile)
-		// 注册
 	}
 	return router
 }
