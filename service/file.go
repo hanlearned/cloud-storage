@@ -1,11 +1,10 @@
 package service
 
 import (
-	"crypto/md5"
+	"cloud-storage/lib"
+	"cloud-storage/model"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"io"
-	"os"
 )
 
 func UploadFile(c *gin.Context) {
@@ -13,23 +12,19 @@ func UploadFile(c *gin.Context) {
 	// 2. 上传文件到指定目录
 	// 3. 计算文件 md5 值
 	file, _ := c.FormFile("file")
-	file_name := file.Filename
-	file_path := "G:\\GoProject\\src\\cloud-storage\\upload\\" + file_name
-	c.SaveUploadedFile(file, file_path)
+	fileName := file.Filename
+	filePath := "D:\\GoProject\\src\\cloud-storage\\upload\\" + fileName
+	err := c.SaveUploadedFile(file, filePath)
+	if nil != err {
+		c.JSON(400, fmt.Sprintf("%s", err))
+		return
+	}
+	md5, err := lib.ComputeMd5(filePath)
+	if err != nil {
+		c.JSON(400, fmt.Sprintf("%s", err))
+	}
+	wareHouseId, _ := c.Get("wareHouseId")
 
-	f, err := os.Open(file_path)
-	if nil != err {
-		fmt.Println(err)
-		c.Status(400)
-		return
-	}
-	md5Handle := md5.New()
-	_, err = io.Copy(md5Handle, f)
-	if nil != err {
-		fmt.Println(err)
-		return
-	}
-	md := md5Handle.Sum(nil)
-	md5str := fmt.Sprintf("%x", md)
-	c.String(200, md5str)
+	model.CreateFile(fileName, md5, filePath, wareHouseId.(int), 1, true)
+
 }
