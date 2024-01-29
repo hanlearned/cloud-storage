@@ -8,3 +8,7 @@ type Folder struct {
 type DeleteFolder struct {
 	FolderId int `uri:"folder_id" binding:"required"`
 }
+
+type File struct {
+	FolderId int `form:"folder_id" binding:"required"`
+}

@@ -1,6 +1,9 @@
 package model
 
-import "cloud-storage/model/mysql"
+import (
+	"cloud-storage/model/mysql"
+	"fmt"
+)
 
 type File struct {
 	ID          int
@@ -16,6 +19,10 @@ type File struct {
 func CreateFile(
 	fileName string, md5 string, savePath string,
 	wareHouseId int, folderId int, status bool) (File, error) {
+	var queryFile File
+	mysql.DB.Where("md5 = ?", md5).Find(&queryFile)
+	fmt.Println(queryFile)
+
 	file := File{
 		Name:        fileName,
 		Md5:         md5,
