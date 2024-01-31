@@ -2,7 +2,7 @@ package model
 
 import (
 	"cloud-storage/model/mysql"
-	"fmt"
+	"errors"
 )
 
 type File struct {
@@ -18,10 +18,17 @@ type File struct {
 
 func CreateFile(
 	fileName string, md5 string, savePath string,
-	wareHouseId int, folderId int, status bool) (File, error) {
-	var queryFile File
-	mysql.DB.Where("md5 = ?", md5).Find(&queryFile)
-	fmt.Println(queryFile)
+	wareHouseId int, folderId int, status bool) (interface{}, error) {
+	/*
+		1. 判断 md5 是否存在
+		2. 判断用户是否有此文件夹
+	*/
+	var queryFolder Folder
+	mysql.DB.Where("id = ?", folderId).Find(&queryFolder)
+	if queryFolder.ID == 0 {
+		var err = errors.New("文件夹 ID 不存在")
+		return queryFolder, err
+	}
 
 	file := File{
 		Name:        fileName,

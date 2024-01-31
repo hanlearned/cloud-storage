@@ -30,5 +30,6 @@ func SetupRouter() *gin.Engine {
 	{
 		file.POST("/upload", service.UploadFile)
 	}
+	router.GET("test", service.Test)
 	return router
 }

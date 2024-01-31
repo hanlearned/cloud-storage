@@ -1,0 +1,9 @@
+[MySQL]
+host=1270.0.0.1
+port=3306
+user=xxx
+password=xxx
+database=xxx
+
+[Store]
+upload_path=\xxx\xxx
