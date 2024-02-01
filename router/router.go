@@ -12,7 +12,7 @@ func SetupRouter() *gin.Engine {
 	router := gin.New()
 	user := router.Group("user")
 	{
-		user.GET("/login", service.Login)
+		user.POST("/login", service.Login)
 		// 注册
 		user.GET("/register", service.Register)
 	}
@@ -30,6 +30,5 @@ func SetupRouter() *gin.Engine {
 	{
 		file.POST("/upload", service.UploadFile)
 	}
-	router.GET("test", service.Test)
 	return router
 }

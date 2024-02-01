@@ -1,12 +1,14 @@
 package main
 
-import "cloud-storage/router"
-import "cloud-storage/model/mysql"
-import "cloud-storage/conf"
+import (
+	"cloud-storage/conf"
+	"cloud-storage/model/mysql"
+	"cloud-storage/router"
+)
 
 func main() {
-	mysql.InitDB()
 	conf.InitConfig()
+	mysql.InitDB()
 	r := router.SetupRouter()
 	r.Run(":80")
 }

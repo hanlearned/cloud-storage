@@ -12,6 +12,7 @@ func ComputeMd5(filePath string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	defer f.Close()
 	md5Handle := md5.New()
 	_, err = io.Copy(md5Handle, f)
 	if err != nil {

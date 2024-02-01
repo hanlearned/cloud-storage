@@ -18,6 +18,7 @@ type MySQL struct {
 
 type StoreConf struct {
 	UploadPath string `ini:"upload_path"`
+	CachePath  string `ini:"cache_path"`
 }
 
 func LoadConfig() *ini.File {
