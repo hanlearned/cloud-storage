@@ -29,6 +29,8 @@ func SetupRouter() *gin.Engine {
 	file.Use(middleware.CheckLogin)
 	{
 		file.POST("/upload", service.UploadFile)
+		file.DELETE("/delete_file/:file_id", service.DeleteFile)
+		file.GET("/list_file", service.ListFile)
 	}
 	return router
 }

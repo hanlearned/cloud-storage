@@ -4,6 +4,7 @@ import (
 	"cloud-storage/model/mysql"
 	"errors"
 	"fmt"
+	"time"
 )
 
 type File struct {
@@ -14,6 +15,7 @@ type File struct {
 	WareHouseId int
 	FolderId    int
 	Status      bool
+	CreateTime  time.Time
 }
 
 func CreateFile(
@@ -34,6 +36,7 @@ func CreateFile(
 		WareHouseId: wareHouseId,
 		FolderId:    folderId,
 		Status:      status,
+		CreateTime:  time.Now(),
 	}
 	result := mysql.DB.Create(&file)
 	if result.Error != nil {
@@ -45,9 +48,21 @@ func CreateFile(
 func IsFileExist(md5 string) bool {
 	var queryFile File
 	mysql.DB.Where("md5 = ?", md5).Find(&queryFile)
-	fmt.Println(queryFile)
-	if queryFile.FolderId == 0 {
+	if queryFile.ID == 0 {
 		return false
 	}
 	return true
+}
+
+func DeleteFile(fileId int, wareHouseId int) error {
+	var queryFile File
+	res := mysql.DB.Model(&queryFile).Where("id = ? and ware_house_id = ?",
+		fileId, wareHouseId).Update("is_delete", 1)
+	return res.Error
+}
+
+func QueryListFile(wareHouseId int) ([]File, error) {
+	var fileList []File
+	res := mysql.DB.Where("ware_house_id = ? and is_delete = 0", wareHouseId).Find(&fileList)
+	return fileList, res.Error
 }
