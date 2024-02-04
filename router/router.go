@@ -31,6 +31,7 @@ func SetupRouter() *gin.Engine {
 		file.POST("/upload", service.UploadFile)
 		file.DELETE("/delete_file/:file_id", service.DeleteFile)
 		file.GET("/list_file", service.ListFile)
+		file.GET("/download_file/:md5", service.DownLoadFile)
 	}
 	return router
 }

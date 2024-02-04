@@ -66,3 +66,12 @@ func QueryListFile(wareHouseId int) ([]File, error) {
 	res := mysql.DB.Where("ware_house_id = ? and is_delete = 0", wareHouseId).Find(&fileList)
 	return fileList, res.Error
 }
+
+func UserFileExist(wareHouseId int, md5 string) (File, error) {
+	var file File
+	res := mysql.DB.Where("ware_house_id = ? and md5 = ?", wareHouseId, md5).Find(&file)
+	if res.Error != nil {
+		return file, res.Error
+	}
+	return file, nil
+}

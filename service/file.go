@@ -7,6 +7,7 @@ import (
 	"cloud-storage/service/schema"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"net/url"
 	"os"
 )
 
@@ -44,7 +45,7 @@ func UploadFile(c *gin.Context) {
 			return
 		}
 	}
-	// 删除文件
+	// 在缓存中删除文件
 	_, err = os.Stat(filePath)
 	if err == nil {
 		err = os.Remove(filePath)
@@ -88,4 +89,21 @@ func ListFile(c *gin.Context) {
 		c.JSON(400, gin.H{"msg": fmt.Sprintf("%s", err)})
 	}
 	c.JSON(200, gin.H{"msg": fileList})
+}
+
+func DownLoadFile(c *gin.Context) {
+	md5 := c.Param("md5")
+	wareHouseId, _ := c.Get("wareHouseId")
+	warehouseId := wareHouseId.(int)
+	// 判断用户是否真拥有此文件
+	file, err := model.UserFileExist(warehouseId, md5)
+	if err != nil {
+		c.JSON(400, gin.H{"msg": fmt.Sprintf("%s", err)})
+	}
+	filePath := store.UploadPath + "\\" + md5
+	// 设置文件名，并解决文件名乱码问题
+	c.Header("Content-Disposition",
+		fmt.Sprintf("attachment; filename*=utf-8''%s", url.QueryEscape(file.Name)))
+	c.File(filePath)
+	return
 }
